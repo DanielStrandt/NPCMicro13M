@@ -8,6 +8,7 @@ small language model from hallucinating a place, number, time, or safety action.
 from __future__ import annotations
 
 import re
+import random
 from typing import Callable, Optional
 
 
@@ -62,41 +63,136 @@ def relevant_fact(state: str, player: str) -> Optional[str]:
 
 
 def identity_answer(state: str, player: str) -> Optional[str]:
-    m = re.search(r"Your name is ([^.]+)\. You are (?:a |an )?([^.]+)", state, re.I)
-    if not m:
-        return None
-    name, role = m.group(1).strip(), m.group(2).strip()
+    details = persona_details(state)
+    if details:
+        name, profession, home = details
+    else:
+        m = re.search(r"Your name is ([^.]+)\. You are (?:a |an )?([^.]+)", state, re.I)
+        if not m:
+            return None
+        name = m.group(1).strip()
+        raw_role = m.group(2).strip()
+        place = re.split(r"\s+(?:from|in|near)\s+", raw_role, maxsplit=1, flags=re.I)
+        profession = place[0].strip()
+        home = place[1].strip() if len(place) > 1 else None
+
+    name = clean(name)
+    profession = clean(profession)
+    home = clean(home) if home else None
     q = norm(player)
-    if any(
-        x in q
-        for x in (
-            "who are",
-            "what is your name",
-            "what's your name",
-            "tell me your name",
-            "what is thy name",
-            "what is thy trade",
-            "what is thy craft",
-            "what work",
-            "what do you make",
-            "are you a farmer",
-            "by what name",
-            "what do you sell",
+    article = "an" if profession[:1].lower() in "aeiou" else "a"
+    home_from = f" from {home}" if home else ""
+    home_in = f" in {home}" if home else ""
+
+    name_intents = (
+        "what is your name", "what's your name", "what is thy name",
+        "what's thy name", "tell me your name", "tell me thy name",
+        "may i know your name", "what should i call you",
+        "what can i call you", "what do i call you",
+        "what name do you go by", "what name dost thou go by",
+        "by what name", "who are you", "who're you", "who art thou", "who are thee",
+        "who might you be", "who do i speak with",
+        "who am i speaking to", "who stands before me",
+        "who is this", "who be you", "who be thee",
+        "identify yourself", "introduce yourself", "how are you called",
+        "what are you called", "what do folk call you", "and you are",
+        "and your name", "you are",
+    )
+    profession_intents = (
+        "what is your trade", "what's your trade", "what is thy trade",
+        "what is your craft", "what's your craft", "what is thy craft",
+        "what is your profession", "what's your profession",
+        "what is your occupation", "what's your occupation",
+        "what is your job", "what work do you do", "what kind of work",
+        "what sort of work", "what line of work", "what is your line of work",
+        "what line of work are you in",
+        "what's your line of work", "what do you do for a living",
+        "what do you do", "what do you do around here", "what work",
+        "what do you make", "what is it you do",
+        "what do you sell", "what are you selling", "what wares do you have",
+        "what goods do you have", "what do you have for sale",
+        "what is for sale", "what are your wares",
+    )
+    location_intents = (
+        "where are you from", "where do you live", "where is your home",
+        "where do you call home", "what town do you call home",
+        "what is your hometown", "which town is home",
+        "where do you hail from", "where dost thou dwell",
+        "where is thy home", "what place is home", "what place do you call home",
+        "where's home", "where is home", "where are you based", "where do you reside",
+        "what city are you from", "what village are you from",
+        "what land are you from",
+    )
+    identity_followup = q in {"what are you", "you are", "and you are", "and your name"}
+
+    if any(x in q for x in location_intents):
+        if not home:
+            return random.choice([
+                f"I know not where I might call home; I am {name}.",
+                f"My home is not stated, though my name is {name}.",
+            ])
+        return random.choice([
+            f"I am from {home}.",
+            f"I hail from {home}.",
+            f"My home is {home}.",
+            f"I call {home} home.",
+        ])
+
+    profession_match = re.match(
+        r"^(?:and\s+)?(?:are you|art thou|be you)\s+(?:a|an|the)?\s*(.+?)\s*[?!.]?$",
+        q,
+    )
+    if not profession_match:
+        profession_match = re.match(
+            r"^(?:and\s+)?(?:you are|you're|you)\s+(?:a|an|the)?\s*(.+?)"
+            r"(?:\s+right)?\s*[?!.]?$",
+            q,
         )
-    ):
-        if "are you a farmer" in q:
-            article = "an" if role[:1].lower() in "aeiou" else "a"
-            return f"Aye. I am {article} {role}."
-        if "sell" in q:
-            if "brewer" in role:
-                return "I sell ale and brewed drinks."
-            if "baker" in role:
-                return "I sell bread and pies."
-        article = "an" if role[:1].lower() in "aeiou" else "a"
-        return f"I am {name}, {article} {role}."
-    if "where are you from" in q:
-        place = re.search(r"\b(?:in|near|from) ([A-Z][A-Za-z ]+)", role)
-        return f"I am from {place.group(1).strip()}." if place else f"I am {name}, {role}."
+    if profession_match and profession_match.group(1).strip() not in {"you", "there"}:
+        asked = profession_match.group(1).strip()
+        actual = norm(profession)
+        matches = asked == actual or asked in actual or actual in asked
+        if matches:
+            return random.choice([
+                f"Aye. I am {article} {profession}.",
+                f"Aye, {profession} is my trade.",
+                f"Indeed. I work as {article} {profession}.",
+            ])
+        return random.choice([
+            f"Nay. I am {article} {profession}.",
+            f"Nay, my trade is {article} {profession}.",
+            f"That is not my trade; I am {article} {profession}.",
+        ])
+
+    if any(x in q for x in profession_intents):
+        if any(x in q for x in ("sell", "wares", "goods", "for sale")):
+            if "brewer" in norm(profession):
+                return random.choice([
+                    "I sell ale and brewed drinks.",
+                    "Ale and other brewed drinks are my wares.",
+                ])
+            if "baker" in norm(profession):
+                return random.choice([
+                    "I sell bread and pies.",
+                    "Fresh bread and sweet pies are my wares.",
+                    "Bread and pies, fresh from my oven.",
+                ])
+        return random.choice([
+            f"I work as {article} {profession}{home_in}.",
+            f"My trade is that of {article} {profession}; I am {name}{home_from}.",
+            f"I earn my keep as {article} {profession}{home_from}.",
+            f"{profession.capitalize()} is my craft; I am {name}.",
+        ])
+
+    if identity_followup or any(x in q for x in name_intents):
+        return random.choice([
+            f"I am {name}, {article} {profession}{home_from}.",
+            f"{name} is my name; I work as {article} {profession}{home_from}.",
+            f"Call me {name}. I am {article} {profession}{home_from}.",
+            f"My name is {name}; I earn my keep as {article} {profession}{home_from}.",
+            f"You speak with {name}, {article} {profession}{home_from}.",
+        ])
+
     return None
 
 
