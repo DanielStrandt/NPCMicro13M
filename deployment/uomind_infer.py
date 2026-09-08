@@ -1,28 +1,28 @@
 #!/usr/bin/env python3
 """
-UO-Mind local inference / freeze verification utility.
+NPCMicro13M local inference and integrity verification utility.
 
-This script is intentionally self-contained: it embeds the exact UO-Mind
-architecture needed to load the frozen best_balanced.pt checkpoint.
+This script is intentionally self-contained: it embeds the exact architecture
+needed to load the stripped final SFT checkpoint.
 
 Examples
 --------
 1) Run the built-in local sanity/generalization suite:
-    python uomind_local_inference.py --bundle ./UO-Mind-production-freeze --test
+    python deployment/uomind_infer.py --bundle . --verify-only
 
 2) Interactive single-turn NPC conversation:
-    python uomind_local_inference.py --bundle ./UO-Mind-production-freeze --interactive
+    python deployment/uomind_infer.py --bundle . --interactive
 
 3) One-shot generation:
-    python uomind_local_inference.py --bundle ./UO-Mind-production-freeze \
+    python deployment/uomind_infer.py --bundle . \
         --state "Your name is Marta. You are a baker from Britain." \
         --player "Who are you?"
 
 4) Verify the extracted freeze hashes:
-    python uomind_local_inference.py --bundle ./UO-Mind-production-freeze --verify-only
+    python deployment/uomind_infer.py --bundle . --verify-only
 
 If --bundle is omitted, the script searches the current directory and its
-immediate descendants for an extracted UO-Mind freeze.
+immediate descendants for an extracted NPCMicro13M deployment bundle.
 
 Dependencies:
     pip install torch tokenizers
@@ -74,7 +74,7 @@ REQUIRED_MARKERS = ("<PAD>", "<BOS>", "<EOS>", "<STATE>", "<PLAYER>", "<SAY>")
 
 
 # ---------------------------------------------------------------------------
-# Exact frozen UO-Mind architecture
+# Exact frozen NPCMicro13M architecture
 # ---------------------------------------------------------------------------
 
 @dataclass
@@ -155,7 +155,7 @@ class GeometryAttention(nn.Module):
         b, t, _ = x.shape
         if t != self.max_seq_len:
             raise ValueError(
-                f"UO-Mind expects a static sequence length of "
+                f"NPCMicro13M expects a static sequence length of "
                 f"{self.max_seq_len}, received {t}"
             )
 
@@ -299,7 +299,7 @@ def discover_bundle(start: Path) -> Path:
         return matches[0].resolve()
     if len(matches) > 1:
         raise SystemExit(
-            "Multiple UO-Mind bundles found. Pass --bundle with the exact "
+            "Multiple NPCMicro13M bundles found. Pass --bundle with the exact "
             "extracted freeze directory:\n  " +
             "\n  ".join(str(p) for p in matches)
         )
@@ -315,9 +315,9 @@ def discover_bundle(start: Path) -> Path:
         return deeper[0].resolve()
 
     raise SystemExit(
-        f"Could not find an extracted UO-Mind freeze under:\n  {start}\n\n"
+        f"Could not find an extracted NPCMicro13M deployment under:\n  {start}\n\n"
         "Expected a directory containing:\n"
-        "  model/best_balanced.pt\n"
+        "  model/npcmicro13m_sft.pt\n"
         "  tokenizer/tokenizer.json\n"
         "  manifest.json (normally present)\n"
     )
@@ -341,6 +341,7 @@ def discover_checkpoint(bundle: Path, override: Optional[str]) -> Path:
             pass
 
     preferred = [
+        bundle / "model" / "npcmicro13m_sft.pt",
         bundle / "model" / "v9_base_finetune.pt",
         bundle / "model" / "v9_grounded.pt",
         bundle / "model" / "best_balanced.pt",
@@ -489,7 +490,7 @@ def load_model(
     if "model_config" not in payload or "model_state_dict" not in payload:
         raise RuntimeError(
             "Checkpoint does not contain model_config/model_state_dict in the "
-            "expected UO-Mind training format."
+            "expected NPCMicro13M checkpoint format."
         )
 
     cfg_dict = dict(payload["model_config"])
@@ -826,7 +827,7 @@ def run_test_suite(
 ) -> int:
     print()
     print("=" * 78)
-    print("UO-MIND LOCAL SANITY / GENERALIZATION SUITE")
+    print("NPCMICRO13M LOCAL SANITY / GENERALIZATION SUITE")
     print("=" * 78)
     print(
         "These prompts are a local behavioral smoke test. "
@@ -889,7 +890,7 @@ def run_test_suite(
 def interactive_loop(model, tok, device, precision, args) -> None:
     print()
     print("=" * 78)
-    print("UO-MIND INTERACTIVE LOCAL INFERENCE")
+    print("NPCMICRO13M INTERACTIVE LOCAL INFERENCE")
     print("=" * 78)
     print("Runtime is stateless/single-turn: each PLAYER line is answered from STATE.")
     print("Commands: /state  /show  /quit")
@@ -956,13 +957,13 @@ def interactive_loop(model, tok, device, precision, args) -> None:
 
 def parse_args():
     p = argparse.ArgumentParser(
-        description="Run the frozen UO-Mind model locally.",
+        description="Run the frozen NPCMicro13M model locally.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     p.add_argument(
         "--bundle",
         default=".",
-        help="Extracted UO-Mind freeze directory, or its parent directory.",
+        help="NPCMicro13M deployment directory, or its parent directory.",
     )
     p.add_argument("--checkpoint", default=None, help="Override checkpoint path.")
     p.add_argument("--tokenizer", default=None, help="Override tokenizer.json path.")
@@ -1028,7 +1029,7 @@ def main() -> int:
 
     bundle = discover_bundle(Path(args.bundle))
     print("=" * 78)
-    print("UO-MIND LOCAL INFERENCE")
+    print("NPCMICRO13M LOCAL INFERENCE")
     print("=" * 78)
     print(f"bundle:              {bundle}")
 

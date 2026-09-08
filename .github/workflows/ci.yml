@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -19,25 +21,19 @@ jobs:
       - name: Install runtime dependencies
         run: python -m pip install -r requirements.txt
 
-      - name: Compile package Python files
+      - name: Compile deployment modules
         run: |
-          python -m py_compile deployment/*.py training/*.py
+          python -m py_compile deployment/*.py
 
       - name: Verify release hashes
         run: python deployment/uomind_infer.py --bundle . --verify-only
 
-      - name: Run one-step fine-tuning smoke test
+      - name: Run deterministic identity smoke test
         run: >-
-          python training/uomind_repair_finetune_v3.py
+          python deployment/uomind_infer.py
           --bundle .
-          --checkpoint model/v9_base_finetune.pt
-          --allow-source-mismatch
-          --corpus-dir training/corpus
-          --corpus-glob example_custom_task.jsonl
-          --require-manifests
-          --output-dir /tmp/npcmicro13m-ci
-          --smoke-test
-          --smoke-steps 1
-          --max-steps 1
           --device cpu
-          --train-last-n-layers 1
+          --temperature 0
+          --max-new-tokens 24
+          --state "Your name is Mira. You are a baker in Britain."
+          --player "Who are you?"

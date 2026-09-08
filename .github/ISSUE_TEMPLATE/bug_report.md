@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a reproducible runtime, training, or documentation problem
+about: Report a reproducible runtime or documentation problem
 title: "[Bug] "
 labels: bug
 ---

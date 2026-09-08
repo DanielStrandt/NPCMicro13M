@@ -1,8 +1,11 @@
 {
-  "checkpoint": "v9_base_finetune.pt",
-  "source_checkpoint": "F:\\uomind\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\uomind_repair_finetune_v9_interpolated\\checkpoints\\best_preserved.pt",
-  "source_sha256": "18a0e9554570e8c9239c048e3643a5ecef22f7dbaa1a6ba5dec028469fde19fb",
-  "release_checkpoint_sha256": "3e79c2b718eca66483181d7cd3be7472cfe55497ac23d6a88ddc8c2d8961fe9e",
+  "checkpoint": "npcmicro13m_sft.pt",
+  "release_stage": "final_sft_phase3_relevance_v3",
+  "source_checkpoint": "UO-Mind-phase3-v3-freeze-20260904-183954Z/model/best_balanced.pt",
+  "source_sha256": "eb0c2538a253e72158192f5004c941e19798febe987e35fbdbc71f19a0e7a170",
+  "release_checkpoint_sha256": "4889df36a7c143385769935c3adc79d215fffc0079eaf2aae41668a70d3963ec",
+  "source_bytes": 172240306,
+  "release_bytes": 62989924,
   "model_config": {
     "vocab_size": 4096,
     "max_seq_len": 128,
@@ -11,29 +14,22 @@
     "n_heads": 8,
     "d_ff": 1024,
     "norm_eps": 1e-06,
-    "geometry_scales": [
-      2.0,
-      4.0,
-      8.0,
-      16.0,
-      32.0,
-      64.0,
-      128.0,
-      256.0
-    ],
+    "geometry_scales": [2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0],
     "geometry_gain_init": 1.0,
     "geometry_gain_max": 4.0,
     "init_std": 0.02,
     "attention_backend": "sdpa"
   },
   "state_dict_keys": 131,
+  "parameters_unique": 13640064,
   "training_artifacts_removed": [
     "optimizer_state_dict",
+    "scaler_state_dict",
     "epoch",
     "global_step",
     "metrics",
-    "training_stage",
-    "saved_utc"
+    "training_history",
+    "rng_state"
   ],
-  "note": "Trainer-ready v9 base. The tied lm_head and token_embedding keys are both retained for the training loader."
+  "note": "Inference-only export of the final SFT best_balanced checkpoint. The complete model state required by the deployment loader is retained."
 }

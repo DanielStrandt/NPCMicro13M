@@ -1,4 +1,4 @@
-"""Grounded serving policy for UO-Mind.
+"""Grounded serving policy for NPCMicro13M.
 
 The model remains the conversational fallback, but questions whose answers are
 explicitly present in STATE are answered from that state.  This protects the

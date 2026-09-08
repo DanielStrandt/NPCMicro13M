@@ -1,4 +1,4 @@
-"""Double-clickable Tkinter conversation GUI for the UO-Mind bundle."""
+"""Double-clickable Tkinter conversation GUI for the NPCMicro13M bundle."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ from uomind_api import UOMindRuntime  # noqa: E402
 class UOMindGUI:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
-        self.root.title("UO-Mind v9 — NPC Conversation")
+        self.root.title("NPCMicro13M — NPC Conversation")
         self.root.geometry("1000x760")
         self.root.minsize(780, 600)
 
@@ -56,7 +56,7 @@ class UOMindGUI:
         outer.columnconfigure(0, weight=1)
         outer.rowconfigure(3, weight=1)
 
-        ttk.Label(outer, text="UO-Mind v9 NPC Conversation", style="Title.TLabel").grid(
+        ttk.Label(outer, text="NPCMicro13M NPC Conversation", style="Title.TLabel").grid(
             row=0, column=0, sticky="w"
         )
         ttk.Label(
@@ -248,7 +248,7 @@ class UOMindGUI:
                     self.start_button.configure(state="normal")
                     self.send_button.configure(state="normal" if self.runtime else "disabled")
                     self.status_var.set("Something went wrong. See the error message.")
-                    messagebox.showerror("UO-Mind error", str(value))
+                messagebox.showerror("NPCMicro13M error", str(value))
         except queue.Empty:
             pass
         self.root.after(100, self._poll_events)

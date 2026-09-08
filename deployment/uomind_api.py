@@ -1,4 +1,4 @@
-"""Small programmatic API for the UO-Mind v9 grounded inference bundle."""
+"""Small programmatic API for the NPCMicro13M grounded inference bundle."""
 
 from __future__ import annotations
 
@@ -31,7 +31,7 @@ class UOMindRuntime:
     ):
         default_bundle = Path(__file__).resolve().parents[1]
         self.bundle = Path(bundle or default_bundle).resolve()
-        checkpoint_path = Path(checkpoint) if checkpoint else Path("model/v9_base_finetune.pt")
+        checkpoint_path = Path(checkpoint) if checkpoint else Path("model/npcmicro13m_sft.pt")
         if not checkpoint_path.is_absolute():
             checkpoint_path = self.bundle / checkpoint_path
         checkpoint_path = checkpoint_path.resolve()
