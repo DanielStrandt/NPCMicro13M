@@ -177,8 +177,7 @@ model was trained for single-pass inference using `STATE` plus the current
 - `lineage/v9_training_summary.json`: v9 run provenance and corpus audit.
 - `deployment/`: CLI, API, GUI, grounded layer, and launcher.
 - `SHA256SUMS.txt`: integrity hashes for the release.
-- `LICENSE`: research-only, non-commercial license for this distribution.
-- `COMMERCIAL-LICENSE.md`: commercial licensing guidance.
+- `LICENSE`: Apache License 2.0 for this repository.
 
 The release is intentionally self-contained and does not include the original
 172 MB frozen production checkpoint or training caches; the v9 base checkpoint
@@ -186,8 +185,7 @@ is the model intended for continued fine-tuning.
 
 ## 8. License and responsible use
 
-The code, model, tokenizer, training files, and deployment materials are
-provided under the included research-only, non-commercial license. Commercial
-deployment requires a separate written license. Third-party dependencies and
-source materials remain subject to their own licenses. See `LICENSE` and
-`COMMERCIAL-LICENSE.md` before redistributing or deploying the release.
+The repository is distributed under the Apache License 2.0. Third-party
+dependencies, source materials, and any downstream datasets remain subject to
+their own licenses. Review the included `LICENSE` and the provenance files
+before redistributing or deploying a fine-tuned model.
