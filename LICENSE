@@ -1,0 +1,102 @@
+UO-MIND RESEARCH-ONLY, NON-COMMERCIAL LICENSE
+Version 1.0 — 2026-09-07
+
+Copyright (c) 2026 UO-Mind contributors
+
+IMPORTANT: This is a source-available, research-only license. It is not an
+OSI-approved open-source license. If you need to use UO-Mind NPC commercially,
+you must obtain a separate written commercial license from the copyright
+holder before doing so.
+
+1. Definitions
+
+"Software" means the source code, scripts, documentation, configuration,
+tokenizer, model weights, and other materials distributed with UO-Mind NPC.
+
+"Model" means the trained neural-network weights and tokenizer included in the
+distribution.
+
+"You" means the individual or legal entity exercising rights under this
+License.
+
+"Research Use" means personal study, academic research, teaching, evaluation,
+benchmarking, experimentation, or other non-commercial investigation where
+the use is not intended to provide a commercial product, service, feature,
+workflow, or financial benefit.
+
+"Commercial Purpose" means any use intended for or directed toward commercial
+advantage or monetary compensation. This includes use in a paid product,
+commercial service, production game, business operation, paid consulting,
+advertising, customer-facing application, or monetized content. It also
+includes using the Model or its outputs to provide a commercial service to a
+third party.
+
+2. Grant of Research Rights
+
+Subject to the conditions in this License, the copyright holder grants You a
+limited, non-exclusive, non-transferable, royalty-free license to use,
+reproduce, study, modify, perform, display, and distribute the Software and
+Model solely for Research Use.
+
+You may publish research findings, benchmarks, and academic papers based on
+Research Use, provided that publication does not distribute the Software or
+Model except under this License and preserves the attribution notice.
+
+3. Commercial Use Requires a Separate License
+
+You may not use, reproduce, modify, distribute, host, deploy, embed, sell,
+license, or otherwise make the Software, Model, or Model outputs available for
+a Commercial Purpose under this License.
+
+Commercial use is permitted only under a separate written commercial license
+executed by the copyright holder. Contact the repository owner to request
+commercial terms. No implied commercial license is granted by this License,
+by access to the repository, or by any contribution or discussion.
+
+4. Conditions
+
+Any permitted copy or distribution of the Software or Model must:
+
+  a. include this License;
+  b. retain the copyright and attribution notices;
+  c. clearly identify modified versions; and
+  d. remain limited to Research Use under this License.
+
+You may not remove or obscure these notices, represent the Software as an
+official product of another party, or use UO-Mind trademarks without separate
+permission.
+
+5. Contributions
+
+Unless You and the copyright holder agree otherwise in writing, a contribution
+submitted for inclusion in this repository is provided under this License and
+may be used by the copyright holder under the same Research Use terms.
+
+6. Third-Party Materials
+
+This License applies only to materials owned by the copyright holder and
+distributed as part of UO-Mind NPC. Third-party libraries, datasets, and other
+materials remain subject to their own licenses. You are responsible for
+complying with those licenses.
+
+7. Disclaimer and Limitation of Liability
+
+THE SOFTWARE AND MODEL ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT,
+ACCURACY, OR RESULTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS
+BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM, OUT OF, OR
+IN CONNECTION WITH THE SOFTWARE, MODEL, OR MODEL OUTPUTS.
+
+8. Termination
+
+Your rights under this License terminate automatically if You violate its
+terms. Upon termination, You must stop using and distributing the Software and
+Model, except that copies retained solely for archival legal or research
+records may be kept and may not be used.
+
+9. Reservation of Rights
+
+All rights not expressly granted under this License are reserved by the
+copyright holder.
+

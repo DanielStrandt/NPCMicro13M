@@ -1,0 +1,25 @@
+# Python caches and environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.env
+
+# Fine-tuning outputs and local logs
+outputs/
+logs/
+*.log
+*.session.json
+transcripts/
+
+# Test/tooling output
+.pytest_cache/
+.coverage
+coverage.xml
+
+# Editors and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

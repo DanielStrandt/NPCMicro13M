@@ -1,0 +1,202 @@
+{
+  "baseline": {
+    "mechanics": {
+      "control_leaks": 0,
+      "eos_ok": 63,
+      "repetitive_outputs": 5
+    },
+    "preserve": 8,
+    "repair": 12
+  },
+  "behavior": {
+    "category_rates": {
+      "entity_relation": {
+        "pass": 1,
+        "rate": 0.14285714285714285,
+        "total": 7
+      },
+      "numeric": {
+        "pass": 1,
+        "rate": 0.14285714285714285,
+        "total": 7
+      },
+      "practical": {
+        "pass": 0,
+        "rate": 0.0,
+        "total": 7
+      },
+      "question_shape": {
+        "pass": 2,
+        "rate": 0.2857142857142857,
+        "total": 7
+      },
+      "social": {
+        "pass": 1,
+        "rate": 0.14285714285714285,
+        "total": 7
+      },
+      "style": {
+        "pass": 2,
+        "rate": 0.2857142857142857,
+        "total": 7
+      },
+      "uncertainty": {
+        "pass": 2,
+        "rate": 0.2857142857142857,
+        "total": 7
+      },
+      "uo_world": {
+        "pass": 4,
+        "rate": 0.5714285714285714,
+        "total": 7
+      }
+    },
+    "control_leaks": 0,
+    "eligible": true,
+    "eos_ok": 64,
+    "eos_total": 68,
+    "lost_source_passes": [],
+    "mechanics_relative_pass": true,
+    "preservation_relative_pass": true,
+    "preserve_pass": 9,
+    "preserve_rate": 0.75,
+    "preserve_total": 12,
+    "promotable": false,
+    "repair_false_referrals": 2,
+    "repair_improvement": 0.017857142857142877,
+    "repair_pass": 13,
+    "repair_rate": 0.23214285714285715,
+    "repair_total": 56,
+    "repetitive_outputs": 3
+  },
+  "candidate": "50% frozen source + 50% prior full-model checkpoint",
+  "checkpoint": "F:\\uomind\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\uomind_repair_finetune_v9_interpolated\\checkpoints\\best_preserved.pt",
+  "corpus_audit": {
+    "categories": {
+      "preserve_false_premise": 45,
+      "preserve_grounding": 239,
+      "preserve_known_unknown": 244,
+      "preserve_practical": 236,
+      "preserve_social": 126,
+      "preserve_social_uo": 57,
+      "preserve_state_fact": 274,
+      "preserve_uo_conversation": 20,
+      "repair_anti_referral": 70,
+      "repair_coherence": 30,
+      "repair_concision": 60,
+      "repair_dialogue_act": 90,
+      "repair_direct_answer": 120,
+      "repair_entity_relation": 240,
+      "repair_first_token": 80,
+      "repair_numeric": 185,
+      "repair_numeric_relation": 70,
+      "repair_question_shape": 155,
+      "repair_social": 115,
+      "repair_style_bridge": 100,
+      "repair_style_equivalence": 310,
+      "repair_uncertainty": 180,
+      "repair_uo_conversation": 195
+    },
+    "corpus_glob": "uomind_preservation_repair_corpus_part*.jsonl",
+    "discovered_shards": 5,
+    "duplicate_full_rows": 0,
+    "duplicate_state_player_pairs": 0,
+    "preservation_fraction": 0.38290651033631595,
+    "preservation_rows": 1241,
+    "repair_fraction": 0.617093489663684,
+    "repair_rows": 2000,
+    "shards": [
+      {
+        "jsonl": "F:\\uomind\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\repaircorpus\\uomind_preservation_repair_corpus_part1.jsonl",
+        "manifest": "F:\\uomind\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\repaircorpus\\uomind_preservation_repair_corpus_part1_manifest.json",
+        "manifest_present": true,
+        "preservation": 300,
+        "repair": 500,
+        "rows": 800,
+        "sha256": "1f7ad8eccc3f8e2531dd8e66b33c641eafda3beb9872039244c9fc69ed0560fa",
+        "shard": "1"
+      },
+      {
+        "jsonl": "F:\\uomind\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\repaircorpus\\uomind_preservation_repair_corpus_part2.jsonl",
+        "manifest": "F:\\uomind\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\repaircorpus\\uomind_preservation_repair_corpus_part2_manifest.json",
+        "manifest_present": true,
+        "preservation": 300,
+        "repair": 500,
+        "rows": 800,
+        "sha256": "5089f94a1faf87471901223814187f3f0a76814502ea5ce4625fc716b9c18f67",
+        "shard": "2"
+      },
+      {
+        "jsonl": "F:\\uomind\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\repaircorpus\\uomind_preservation_repair_corpus_part3.jsonl",
+        "manifest": "F:\\uomind\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\repaircorpus\\uomind_preservation_repair_corpus_part3_manifest.json",
+        "manifest_present": true,
+        "preservation": 300,
+        "repair": 500,
+        "rows": 800,
+        "sha256": "e68356b69f2816caeaa635aeb6848d8c769f1332696bab2e06e8b8df556773f7",
+        "shard": "3"
+      },
+      {
+        "jsonl": "F:\\uomind\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\repaircorpus\\uomind_preservation_repair_corpus_part4.jsonl",
+        "manifest": "F:\\uomind\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\repaircorpus\\uomind_preservation_repair_corpus_part4_manifest.json",
+        "manifest_present": true,
+        "preservation": 300,
+        "repair": 500,
+        "rows": 800,
+        "sha256": "3f7fab0e154972c4dba6f7f4eb5d5b6c5dc708821ce985452a1f614f6cf06695",
+        "shard": "4"
+      },
+      {
+        "jsonl": "F:\\uomind\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\repaircorpus\\uomind_preservation_repair_corpus_part5.jsonl",
+        "manifest": "F:\\uomind\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\repaircorpus\\uomind_preservation_repair_corpus_part5_manifest.json",
+        "manifest_present": true,
+        "preservation": 41,
+        "repair": 0,
+        "rows": 41,
+        "sha256": "779121f831626e8e5e55489772ce912398e2aadc2f7bd8e1c85436f4987f7a12",
+        "shard": "5"
+      }
+    ],
+    "total_rows": 3241
+  },
+  "holdout_rows": {
+    "categories": {
+      "preserve_false_premise": 6,
+      "preserve_grounding": 24,
+      "preserve_known_unknown": 25,
+      "preserve_practical": 24,
+      "preserve_social": 15,
+      "preserve_social_uo": 6,
+      "preserve_state_fact": 28,
+      "preserve_uo_conversation": 4,
+      "repair_anti_referral": 7,
+      "repair_coherence": 5,
+      "repair_concision": 6,
+      "repair_dialogue_act": 9,
+      "repair_direct_answer": 12,
+      "repair_entity_relation": 24,
+      "repair_first_token": 8,
+      "repair_numeric": 19,
+      "repair_numeric_relation": 7,
+      "repair_question_shape": 16,
+      "repair_social": 15,
+      "repair_style_bridge": 10,
+      "repair_style_equivalence": 30,
+      "repair_uncertainty": 18,
+      "repair_uo_conversation": 22
+    },
+    "max_prompt": 59,
+    "max_target": 25,
+    "preservation": 132,
+    "repacked": 52,
+    "repair": 208,
+    "rows": 340
+  },
+  "holdout_teacher_forced": {
+    "loss": 2.5355425639586016,
+    "ppl": 12.623277926022135,
+    "token_acc": 0.5024903154399557,
+    "tokens": 3614
+  },
+  "prior_checkpoint": "F:\\uomind\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\uomind_repair_finetune_v2\\checkpoints\\final_unpromoted.pt"
+}

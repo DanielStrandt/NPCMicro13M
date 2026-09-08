@@ -1,0 +1,40 @@
+{
+  "name": "uomind_preservation_repair_corpus_part4.jsonl",
+  "version": "preservation-repair-v1-shard-4-of-4-generation-bridge",
+  "seed": 20260907,
+  "sha256": "3f7fab0e154972c4dba6f7f4eb5d5b6c5dc708821ce985452a1f614f6cf06695",
+  "rows": 800,
+  "preservation_rows": 300,
+  "repair_rows": 500,
+  "category_counts": {
+    "preserve_grounding": 60,
+    "preserve_state_fact": 70,
+    "preserve_known_unknown": 60,
+    "preserve_practical": 60,
+    "preserve_social_uo": 50,
+    "repair_direct_answer": 120,
+    "repair_first_token": 80,
+    "repair_style_bridge": 100,
+    "repair_anti_referral": 70,
+    "repair_concision": 60,
+    "repair_numeric_relation": 70
+  },
+  "duplicate_full_rows": 0,
+  "duplicate_state_player_pairs": 0,
+  "cross_shard_full_duplicates_detected": 0,
+  "cross_shard_state_player_duplicates_detected": 0,
+  "prior_shards_checked": [
+    "/mnt/data/uomind_preservation_repair_corpus_part1.jsonl",
+    "/mnt/data/uomind_preservation_repair_corpus_part2.jsonl",
+    "/mnt/data/uomind_preservation_repair_corpus_part3.jsonl"
+  ],
+  "unique_assistant_texts": 178,
+  "target_length_policy": "Mostly very short, decisive replies intended to move greedy first-token and early-token decisions.",
+  "notes": [
+    "Generation-bridge shard: deliberately not another broad general SFT shard.",
+    "Same 300 preservation / 500 repair balance as the first three shards.",
+    "Emphasizes direct answer shape, first-token decisions, short paraphrase clusters, anti-referral, concision, numeric/relation binding.",
+    "No dedicated profession-referral targets.",
+    "Repeated natural short answers are intentional."
+  ]
+}

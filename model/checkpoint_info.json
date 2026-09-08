@@ -1,0 +1,39 @@
+{
+  "checkpoint": "v9_base_finetune.pt",
+  "source_checkpoint": "F:\\uomind\\UO-Mind-phase3-v3-freeze-20260904-183954Z\\uomind_repair_finetune_v9_interpolated\\checkpoints\\best_preserved.pt",
+  "source_sha256": "18a0e9554570e8c9239c048e3643a5ecef22f7dbaa1a6ba5dec028469fde19fb",
+  "release_checkpoint_sha256": "3e79c2b718eca66483181d7cd3be7472cfe55497ac23d6a88ddc8c2d8961fe9e",
+  "model_config": {
+    "vocab_size": 4096,
+    "max_seq_len": 128,
+    "d_model": 256,
+    "n_layers": 16,
+    "n_heads": 8,
+    "d_ff": 1024,
+    "norm_eps": 1e-06,
+    "geometry_scales": [
+      2.0,
+      4.0,
+      8.0,
+      16.0,
+      32.0,
+      64.0,
+      128.0,
+      256.0
+    ],
+    "geometry_gain_init": 1.0,
+    "geometry_gain_max": 4.0,
+    "init_std": 0.02,
+    "attention_backend": "sdpa"
+  },
+  "state_dict_keys": 131,
+  "training_artifacts_removed": [
+    "optimizer_state_dict",
+    "epoch",
+    "global_step",
+    "metrics",
+    "training_stage",
+    "saved_utc"
+  ],
+  "note": "Trainer-ready v9 base. The tied lm_head and token_embedding keys are both retained for the training loader."
+}

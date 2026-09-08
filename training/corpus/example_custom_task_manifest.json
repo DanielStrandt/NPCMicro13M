@@ -1,0 +1,11 @@
+{
+  "name": "example_custom_task.jsonl",
+  "version": "custom-task",
+  "sha256": "2c53825a535d23a00e2a6d6d033535d11fae125086bc75b5acc3bc802551bd03",
+  "rows": 6,
+  "preservation_rows": 3,
+  "repair_rows": 3,
+  "category_counts": {
+    "custom_task_example": 6
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "uomind_preservation_repair_corpus_part1.jsonl",
+  "version": "preservation-repair-v1-shard-1-of-3",
+  "seed": 20260904,
+  "sha256": "1f7ad8eccc3f8e2531dd8e66b33c641eafda3beb9872039244c9fc69ed0560fa",
+  "rows": 800,
+  "preservation_rows": 300,
+  "repair_rows": 500,
+  "category_counts": {
+    "preserve_grounding": 60,
+    "preserve_state_fact": 70,
+    "preserve_known_unknown": 60,
+    "preserve_practical": 60,
+    "preserve_social": 50,
+    "repair_question_shape": 85,
+    "repair_style_equivalence": 110,
+    "repair_entity_relation": 70,
+    "repair_numeric": 60,
+    "repair_uncertainty": 60,
+    "repair_uo_conversation": 70,
+    "repair_social": 45
+  },
+  "duplicate_full_rows": 0,
+  "duplicate_state_player_pairs": 0,
+  "unique_assistant_texts": 245,
+  "notes": [
+    "Shard 1 of 3; designed to be mixed preservation+repair rather than sequential phases.",
+    "Includes semantic family and pair_id metadata for later grouped splitting.",
+    "No dedicated profession-routing/refusal targets.",
+    "Repeated natural assistant targets are intentional; no artificial uniqueness wrappers."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "uomind_preservation_repair_corpus_part5.jsonl",
+  "version": "preservation-targeted-v1-shard-5",
+  "seed": 20260904,
+  "sha256": "779121f831626e8e5e55489772ce912398e2aadc2f7bd8e1c85436f4987f7a12",
+  "rows": 41,
+  "preservation_rows": 41,
+  "repair_rows": 0,
+  "category_counts": {
+    "preserve_practical": 16,
+    "preserve_grounding": 4,
+    "preserve_state_fact": 4,
+    "preserve_known_unknown": 4,
+    "preserve_social": 6,
+    "preserve_social_uo": 7
+  },
+  "duplicate_full_rows": 0,
+  "duplicate_state_player_pairs": 0,
+  "notes": [
+    "Targeted preservation paraphrases for the frozen-source behaviors used by the strict gate.",
+    "Emphasizes informative short answers rather than bare yes/no truncation.",
+    "All rows are preservation examples; no repair examples are added in this shard."
+  ]
+}
