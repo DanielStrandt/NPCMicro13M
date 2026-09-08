@@ -67,7 +67,23 @@ def identity_answer(state: str, player: str) -> Optional[str]:
         return None
     name, role = m.group(1).strip(), m.group(2).strip()
     q = norm(player)
-    if any(x in q for x in ("who are", "what is thy trade", "what is thy craft", "what work", "what do you make", "are you a farmer", "by what name", "what do you sell")):
+    if any(
+        x in q
+        for x in (
+            "who are",
+            "what is your name",
+            "what's your name",
+            "tell me your name",
+            "what is thy name",
+            "what is thy trade",
+            "what is thy craft",
+            "what work",
+            "what do you make",
+            "are you a farmer",
+            "by what name",
+            "what do you sell",
+        )
+    ):
         if "are you a farmer" in q:
             article = "an" if role[:1].lower() in "aeiou" else "a"
             return f"Aye. I am {article} {role}."
