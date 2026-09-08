@@ -1,9 +1,13 @@
 # NPCMicro13M
 
-NPCMicro13M is a compact, local-first language model for believable game
-characters. It is ready to run as a merchant, guard, villager, quest-giver,
-companion, monster, or any other NPC whose behavior is supplied through game
-state.
+NPCMicro13M is a compact, local-first language model for believable village
+NPCs. It is fully trained for villager-style characters in any profession:
+merchants, bakers, blacksmiths, farmers, innkeepers, guards, healers,
+ferrymen, craftsmen, and similar everyday roles.
+
+It is not a quest engine, combat monster, companion model, or action-policy
+model. Quests, combat, movement, inventory changes, and game rules should stay
+in the game server while NPCMicro13M provides the villager's spoken response.
 
 This repository contains the final SFT-trained model, matching tokenizer, and
 deployment runtime. It is an inference release: training scripts, datasets,
@@ -15,9 +19,9 @@ download is focused on what a game developer needs to ship.
 - **Small and local.** At 13.6M parameters, it is practical for CPU-only
   machines and lightweight game servers. No hosted model, account, API key, or
   per-message bill is required.
-- **State-driven characters.** Put the changing facts in the request—name,
-  profession, location, faction, quest, prices, inventory, or weather—instead
-  of creating a separate model for every NPC.
+- **State-driven villagers.** Put the changing facts in the request—name,
+  profession, location, local knowledge, prices, inventory, or weather—instead
+  of creating a separate model for every villager.
 - **Bounded generation.** Each turn receives only the NPC state and the current
   player message. There is no hidden, ever-growing transcript that can cause
   the character to continue an old conversation.
@@ -33,7 +37,9 @@ Compared with a large general-purpose chat model, NPCMicro13M gives up broad
 reasoning and world knowledge in exchange for much lower resource use,
 predictable short responses, local deployment, and easier per-game control.
 Compared with a rule-only dialogue system, it can respond to varied wording
-without requiring a separate rule for every phrasing.
+without requiring a separate rule for every phrasing. It should be paired with
+the game's quest, combat, movement, and economy systems rather than replacing
+them.
 
 ## Quick start
 
@@ -97,18 +103,18 @@ PLAYER:    current player speech
 NPC:       one concise answer
 ```
 
-Example state fields for any game:
+Example state fields for a villager in any game:
 
 ```text
 Your name is Sella. You are a ferrymaster in Dunmar.
 You charge 3 silver to cross the river.
 You know the north and east crossings, but not distant kingdoms.
-You are patient but wary of armed travelers.
+You are patient and speak plainly with travelers.
 ```
 
-The same model can serve hundreds of NPCs. Keep the model loaded once, pass a
-different state string for each character, and serialize access or use a small
-worker pool when several players speak at the same time.
+The same model can serve hundreds of villagers. Keep the model loaded once,
+pass a different state string for each character, and serialize access or use
+a small worker pool when several players speak at the same time.
 
 ## Model design
 
@@ -169,10 +175,11 @@ prices, quest progress, inventories, or locations.
 
 ## Limitations
 
-NPCMicro13M is specialized for short responses. It is not a replacement for a
-database, quest engine, rules engine, or large reasoning model. Give the game
-facts explicitly when accuracy matters, and treat generated text as dialogue,
-not as authoritative game state.
+NPCMicro13M is specialized for short villager responses. It is not a
+replacement for a database, quest engine, combat AI, movement system, rules
+engine, or large reasoning model. Give the game facts explicitly when accuracy
+matters, and treat generated text as dialogue, not as authoritative game
+state.
 
 ## License
 
