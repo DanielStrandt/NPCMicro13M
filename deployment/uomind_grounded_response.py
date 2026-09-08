@@ -108,35 +108,9 @@ def identity_answer(state: str, player: str) -> Optional[str]:
         "what line of work are you in",
         "what's your line of work", "what do you do for a living",
         "what do you do", "what do you do around here", "what work",
-        "what do you make", "what is it you do",
-        "what do you sell", "what are you selling", "what wares do you have",
-        "what goods do you have", "what do you have for sale",
-        "what is for sale", "what are your wares",
-    )
-    location_intents = (
-        "where are you from", "where do you live", "where is your home",
-        "where do you call home", "what town do you call home",
-        "what is your hometown", "which town is home",
-        "where do you hail from", "where dost thou dwell",
-        "where is thy home", "what place is home", "what place do you call home",
-        "where's home", "where is home", "where are you based", "where do you reside",
-        "what city are you from", "what village are you from",
-        "what land are you from",
+        "what is it you do",
     )
     identity_followup = q in {"what are you", "you are", "and you are", "and your name"}
-
-    if any(x in q for x in location_intents):
-        if not home:
-            return random.choice([
-                f"I know not where I might call home; I am {name}.",
-                f"My home is not stated, though my name is {name}.",
-            ])
-        return random.choice([
-            f"I am from {home}.",
-            f"I hail from {home}.",
-            f"My home is {home}.",
-            f"I call {home} home.",
-        ])
 
     profession_match = re.match(
         r"^(?:and\s+)?(?:are you|art thou|be you)\s+(?:a|an|the)?\s*(.+?)\s*[?!.]?$",
@@ -194,6 +168,36 @@ def identity_answer(state: str, player: str) -> Optional[str]:
         ])
 
     return None
+
+
+def model_first_question(player: str) -> bool:
+    """Leave character-specific home, wares, and local-life answers to the LM."""
+    q = norm(player)
+    home_terms = (
+        "where are you from", "where do you live", "where is your home",
+        "where do you call home", "what town do you call home",
+        "what is your hometown", "which town is home",
+        "where do you hail from", "where dost thou dwell",
+        "where is thy home", "what place is home", "what place do you call home",
+        "where's home", "where is home", "where are you based",
+        "where do you reside", "what city are you from",
+        "what village are you from", "what land are you from",
+    )
+    wares_terms = (
+        "what do you sell", "what are you selling", "what wares",
+        "what goods", "what do you have for sale", "what is for sale",
+        "what are your wares", "what do you carry", "what is in stock",
+        "what can i buy", "what can i purchase", "show me your wares",
+        "what have you got",
+    )
+    home_related = any(term in q for term in home_terms) or (
+        any(word in q for word in ("where", "which", "what"))
+        and any(word in q for word in ("home", "live", "based", "reside", "dwell", "hail"))
+    )
+    wares_related = any(term in q for term in wares_terms) or (
+        any(word in q for word in ("sell", "selling", "wares", "goods", "sale", "stock", "buy", "purchase", "carry", "offer", "available"))
+    )
+    return home_related or wares_related
 
 
 def number_value(text: str) -> Optional[int]:
@@ -475,6 +479,8 @@ def persona_consistency(text: str, state: str) -> str:
 def grounded_response(state: str, player: str, model_fallback: Optional[Callable[[str, str], str]] = None) -> str:
     """Answer from explicit state when possible, otherwise use the model."""
     q = norm(player)
+    if model_first_question(player) and model_fallback is not None:
+        return persona_consistency(model_fallback(state, player), state)
     answer = social_answer(player)
     if answer:
         return answer
