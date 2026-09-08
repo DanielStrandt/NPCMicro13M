@@ -1,146 +1,151 @@
 # NPCMicro13M
 
-NPCMicro13M is a self-contained, CPU-friendly conversational language model
-for short Ultima Online-style NPC interactions. It contains the
-trainer-compatible v9 base checkpoint (13,640,064 parameters), matching
-tokenizer, the exact preservation-first trainer used for the v9 continuation,
-the corpus shards used in that continuation, source-lineage files, and
-deployment tools.
+NPCMicro13M is a small, local-first language model for giving characters in
+games a believable voice. Fine-tune it for a merchant, guard, villager,
+quest-giver, companion, monster, or any other NPC in almost any game world.
 
-The checkpoint is inference/training ready but does not include optimizer
-state, epochs, metrics, or other training-session bloat. It retains the full
-model state, including both tied embedding keys, because the fine-tuning
-trainer expects the complete state dictionary.
+You provide the facts that matter—name, role, location, knowledge, attitude,
+and current world state—then teach the model the final behavior and vocabulary
+you want through ordinary JSONL examples. The included runtime can then answer
+one player message at a time using only the NPC state and the current message.
 
-## 1. Install
+## Why this design is useful
+
+NPCMicro13M is designed for game servers and embedded applications rather than
+for open-ended assistant chat.
+
+- **Small enough to run locally.** The 13.6M-parameter model is practical to
+  test and fine-tune on modest hardware, and it can run on CPU-only servers.
+- **Game state stays outside the weights.** Put changing facts in the state
+  supplied by the game—name, profession, town, quest, prices, faction, or
+  weather—instead of retraining for every NPC.
+- **One-turn generation is predictable.** Each request contains the NPC state
+  and the current player speech. The model does not accidentally continue a
+  hidden transcript or consume an ever-growing conversation history.
+- **Short replies are a strength.** The 128-token context is focused on
+  concise in-world dialogue, which keeps latency, memory, and server load low.
+- **Fine-tuning is targeted.** The trainer can update only the final
+  transformer blocks first, reducing the chance that a small custom dataset
+  erases the model's basic conversational behavior.
+- **Deployment is yours.** There is no hosted endpoint, account, API key, or
+  per-message charge required. Use the Python API, HTTP API, command line, or
+  desktop GUI.
+
+This is a good fit when a large general-purpose model would be too expensive,
+too slow, too dependent on a network service, or too difficult to keep inside
+strict NPC boundaries. A large model remains the better choice for long-form
+reasoning, broad factual research, or unrestricted multi-turn chat.
+
+## What is included
+
+- Trainer-compatible model checkpoint and matching 4,096-token tokenizer.
+- Fine-tuning trainer with preservation-first evaluation and checkpoint
+  promotion.
+- Example custom-task dataset and manifest generator.
+- The exact v9 repair/preservation corpus and training lineage.
+- Local CLI inference, grounded response runtime, Python API, and double-click
+  desktop GUI.
+- Hash manifests, CI validation, and deployment documentation.
+
+## Use it in three steps
+
+### 1. Install and try the model
 
 Use Python 3.10 or newer:
 
 ```text
 python -m pip install -r requirements.txt
+python deployment/uomind_infer.py --bundle . \
+  --state "Your name is Mira. You are a baker in Britain." \
+  --player "Who are you?"
 ```
 
-For NVIDIA CUDA, install the appropriate PyTorch build first using the command
-recommended by PyTorch, then install `tokenizers`.
+On Windows, double-click `deployment/START_UO_MIND_GUI.bat` to open the
+conversation GUI. For server integration, import `UOMindRuntime` as shown in
+the Python integration section below.
 
-## 2. Verify and run the base model
+The CLI uses the grounded response layer by default. Add `--raw-model` when
+you want to inspect the model's unprocessed output during development.
 
-From this release folder:
+### 2. Create examples for your game
 
-```text
-python deployment/uomind_infer.py --bundle . --verify-only
-python deployment/uomind_infer.py --bundle . --state "Your name is Mira. You are a baker in Britain." --player "Who are you?"
-```
-
-The default response uses the grounded response layer. To inspect the raw
-language-model output:
-
-```text
-python deployment/uomind_infer.py --bundle . --raw-model --state "Your name is Mira. You are a baker in Britain." --player "Who are you?"
-```
-
-For the GUI, double-click `deployment/uomind_gui.pyw` or
-`deployment/START_UO_MIND_GUI.bat`. The GUI keeps a visible transcript, but
-each model turn is single-pass: only the fixed NPC state and current player
-message are sent to the model.
-
-## 3. Fine-tuning data format
-
-Each training row is one JSON object on one line:
+Each training row is one complete state/question/answer example:
 
 ```json
-{"messages":[{"role":"system","content":"Your name is Mira. You are a baker in Britain."},{"role":"user","content":"Who are you?"},{"role":"assistant","content":"I am Mira, a baker in Britain."}],"meta":{"category":"identity","family":"identity_001","pair_id":null,"preservation":true}}
+{"messages":[
+  {"role":"system","content":"Your name is Sella. You are a ferrymaster in Dunmar. You know the river crossings and charge 3 silver."},
+  {"role":"user","content":"How much to cross?"},
+  {"role":"assistant","content":"Three silver to cross, friend. The river runs swift today."}
+],"meta":{"category":"commerce","family":"ferry_price","preservation":false}}
 ```
 
-Required fields:
+For another game, replace the state with that game's facts and write answers
+in its voice. Useful categories include:
 
-- `messages`: exactly `system`, `user`, `assistant`, in that order.
-- `meta.category`: a descriptive task category.
-- `meta.family`: a grouping name used to keep related examples together.
-- `meta.preservation`: `true` for behavior that should remain intact; `false` for new behavior.
+- identity, role, home, faction, and relationships;
+- services, prices, items, quests, and local procedures;
+- greetings, farewells, rumors, warnings, refusals, and uncertainty;
+- setting-specific names, slang, lore, and terminology;
+- out-of-scope questions where the NPC should admit it does not know.
 
-Use several differently worded examples for each behavior. For a task-specific
-fine-tune, include preservation examples from the base model so the new task
-does not erase identity, formatting, safety, or conversational behavior.
+Use several differently worded questions for each behavior. Include
+preservation examples for behaviors you want to keep, especially identity
+handling, concise replies, uncertainty, and answer relevance. A small,
+balanced dataset is usually safer than many near-duplicate examples.
 
-An editable six-row example is in
-`training/corpus/example_custom_task.jsonl`. Copy it to a new filename, edit
-the rows, and create its manifest:
+Create a manifest for your dataset:
 
 ```text
-python training/make_manifest.py training/corpus/my_task.jsonl
+python training/make_manifest.py training/corpus/my_game.jsonl
 ```
 
-## 4. Reproduce the v9 continuation
+### 3. Fine-tune and deploy your candidate
 
-The exact v9 repair/preservation corpus is in
-`lineage/repaircorpus/`. To replay that training path from the v9 base:
-
-```text
-python training/uomind_repair_finetune_v3.py ^
-  --bundle . ^
-  --checkpoint model/v9_base_finetune.pt ^
-  --allow-source-mismatch ^
-  --corpus-dir lineage/repaircorpus ^
-  --corpus-glob "uomind_preservation_repair_corpus_part*.jsonl" ^
-  --require-manifests ^
-  --output-dir outputs/v9_replay ^
-  --train ^
-  --device cpu
-```
-
-PowerShell users can put the command on one line or replace `^` with a
-backtick. The trainer defaults to a low-cost selective update of the final
-four transformer blocks. Start with one epoch on CPU. The original v9 run used
-five shards containing 3,241 rows: 2,000 repair rows and 1,241 preservation
-rows.
-
-## 5. Fine-tune for a new task
-
-Put your manifest-backed JSONL shard in `training/corpus/`, then run:
+Start with a low-cost final-block update:
 
 ```text
-python training/uomind_repair_finetune_v3.py ^
-  --bundle . ^
-  --checkpoint model/v9_base_finetune.pt ^
-  --allow-source-mismatch ^
-  --corpus-dir training/corpus ^
-  --corpus-glob "my_task.jsonl" ^
-  --require-manifests ^
-  --output-dir outputs/my_task ^
-  --train ^
-  --device cpu ^
-  --epochs 1 ^
+python training/uomind_repair_finetune_v3.py \
+  --bundle . \
+  --checkpoint model/v9_base_finetune.pt \
+  --allow-source-mismatch \
+  --corpus-dir training/corpus \
+  --corpus-glob my_game.jsonl \
+  --require-manifests \
+  --output-dir outputs/my_game \
+  --train \
+  --device cpu \
+  --epochs 1 \
   --train-last-n-layers 4
 ```
 
-For a GPU, change `--device cpu` to `--device cuda` and choose a suitable
-PyTorch CUDA installation. To make a stronger update, use
-`--train-last-n-layers 0` to train all transformer blocks. Only enable
-`--train-embedding` when the task genuinely needs new vocabulary behavior;
-that option is more likely to change existing responses.
-
-The trainer writes checkpoints under `outputs/my_task/checkpoints/`:
-
-- `best_preserved.pt`: the preferred candidate when it passes preservation gates.
-- `final_unpromoted.pt`: the final diagnostic candidate, even if it regressed.
-
-Do not overwrite `model/v9_base_finetune.pt`. Keep every experiment in its own
-output folder and manually inspect the raw responses before deployment.
-
-## 6. Use a fine-tuned checkpoint
-
-One-shot CLI inference:
+Use `--device cuda` on a compatible NVIDIA machine. The preferred promoted
+candidate is:
 
 ```text
-python deployment/uomind_infer.py ^
-  --bundle . ^
-  --checkpoint outputs/my_task/checkpoints/best_preserved.pt ^
-  --state "Your name is Nessa. You are a merchant in Britain." ^
-  --player "What do you sell?"
+outputs/my_game/checkpoints/best_preserved.pt
 ```
 
-Programmatic use:
+Keep the original checkpoint unchanged and give each experiment its own
+output directory. Test the raw and grounded responses manually before putting
+the candidate into a live game server.
+
+## Integration model
+
+The runtime contract is intentionally simple:
+
+```text
+NPC STATE: fixed facts for this turn
+PLAYER:    the current player message
+NPC:       one concise answer
+```
+
+The visible GUI transcript is for the human operator. It is not automatically
+sent back as hidden context, so every turn is isolated and predictable. If a
+game needs memory, the game server should store structured facts—quest stage,
+relationship, inventory, prior promises—and include only the relevant facts
+in the next state string.
+
+Python integration:
 
 ```python
 import sys
@@ -149,43 +154,66 @@ from pathlib import Path
 sys.path.insert(0, str(Path("deployment").resolve()))
 from uomind_api import UOMindRuntime
 
-runtime = UOMindRuntime(
-    bundle=".",
-    checkpoint="outputs/my_task/checkpoints/best_preserved.pt",
-    device="cpu",
+runtime = UOMindRuntime(bundle=".", checkpoint="model/v9_base_finetune.pt", device="cpu")
+reply = runtime.respond(
+    "Your name is Sella. You are a ferrymaster in Dunmar.",
+    "Can you take me across?",
 )
-answer = runtime.respond(
-    "Your name is Nessa. You are a merchant in Britain.",
-    "What do you sell?",
-)
-print(answer["text"])
+print(reply["text"])
 ```
 
-`respond()` does not accept conversation history. This is intentional: the
-model was trained for single-pass inference using `STATE` plus the current
-`PLAYER` message.
+The HTTP API exposes the same one-turn contract for game-server integration.
+It binds to localhost by default; add authentication and access control before
+exposing it to another machine.
 
-## 7. Release layout
+## Model design
 
-- `model/v9_base_finetune.pt`: trainer-compatible v9 base model.
-- `tokenizer/tokenizer.json`: matching 4,096-token tokenizer.
-- `training/uomind_repair_finetune_v3.py`: exact v9 continuation trainer.
-- `training/make_manifest.py`: helper for custom JSONL manifests.
-- `training/corpus/`: editable custom-task example.
-- `lineage/repaircorpus/`: the five corpus shards used for v9.
-- `lineage/source/`: original Colab training and evaluation source files.
-- `lineage/v9_training_summary.json`: v9 run provenance and corpus audit.
-- `deployment/`: CLI, API, GUI, grounded layer, and launcher.
-- `SHA256SUMS.txt`: integrity hashes for the release.
-- `LICENSE`: Apache License 2.0 for this repository.
+The included architecture has 13,640,064 parameters, a 256-wide hidden state,
+16 transformer layers, 8 attention heads, a 1,024-wide feed-forward layer, a
+128-token context, and tied input/output embeddings. It uses a fixed
+multi-scale relational geometry instead of learned positional embeddings,
+which keeps the architecture compact while still giving the model useful
+short-range and long-range token relationships.
 
-The release is intentionally self-contained and does not include the original
-172 MB frozen production checkpoint or training caches; the v9 base checkpoint
-is the model intended for continued fine-tuning.
+The important distinction is not only parameter count. NPCMicro13M separates
+three jobs that are often mixed together in larger chat systems:
 
-## 8. License and responsible use
+1. **The model learns dialogue behavior and language patterns.**
+2. **The game supplies current facts through state.**
+3. **The runtime enforces deployment-specific grounding and output handling.**
 
-The repository is distributed under the Apache License 2.0. Third-party
-dependencies, source materials, and any downstream datasets remain subject to
-their own licenses. Review the included `LICENSE` and the provenance files
-before redistributing or deploying a fine-tuned model.
+That separation makes it easier to reuse one model across hundreds of NPCs,
+change a character without retraining the whole world, and keep server memory
+and inference work bounded.
+
+## Repository layout
+
+```text
+model/                         Fine-tuning-ready checkpoint
+tokenizer/                     Matching tokenizer
+training/                      Trainer, manifest tool, and example data
+deployment/                    CLI, API, GUI, and grounded runtime
+lineage/repaircorpus/          Exact v9 repair/preservation corpus
+lineage/source/                Training and evaluation source lineage
+SHA256SUMS.txt                 Frozen-artifact integrity hashes
+```
+
+The checkpoint is stored with Git LFS. Run the integrity check after cloning:
+
+```text
+python deployment/uomind_infer.py --bundle . --verify-only
+```
+
+## Limitations
+
+NPCMicro13M is intentionally specialized for short responses. It is not a
+replacement for a large reasoning model, a database, a quest engine, or a
+general knowledge system. Give the game facts explicitly when accuracy
+matters, and fine-tune with examples that demonstrate how the NPC should
+respond when a question is outside its knowledge.
+
+## License
+
+This repository is distributed under the Apache License 2.0. Third-party
+dependencies, source materials, and downstream datasets remain subject to
+their own licenses.
